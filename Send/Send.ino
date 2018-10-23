@@ -22,13 +22,13 @@
 // - to stop encrypting call .Encrypt(NULL)
 uint8_t KEY[] = "ABCDABCDABCDABCD";
 
-int interPacketDelay = 1000; //wait this many ms between sending packets
+int interPacketDelay = 50; //wait this many ms between sending packets
 char input = 0;
 
 // Need an instance of the Radio Module
 RFM12B radio;
 byte sendSize=0;
-char payload[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^&*(){}[]`|<>?+=:;,.";
+char payload[] = "StAng20 Spd40";
 bool requestACK=false;
 
 void setup()
@@ -55,16 +55,14 @@ void loop()
     }
   }
 
-  Serial.print("Sending[");
-  Serial.print(sendSize+1);
-  Serial.print("]:");
-  for(byte i = 0; i < sendSize+1; i++)
+  Serial.print("Sending:");
+  for(byte i = 0; i < 14; i++)
     Serial.print((char)payload[i]);
   
-  requestACK = !(sendSize % 3); //request ACK every 3rd xmission
-  
+  //requestACK = !(sendSize % 3); //request ACK every 3rd xmission
+  requestACK = 1;
   radio.Wakeup();
-  radio.Send(GATEWAYID, payload, sendSize+1, requestACK);
+  radio.Send(GATEWAYID, payload, 13, requestACK);
   if (requestACK)
   {
     Serial.print(" - waiting for ACK...");
@@ -73,7 +71,7 @@ void loop()
   }
   radio.Sleep();
   
-  sendSize = (sendSize + 1) % 88;
+  sendSize = (sendSize + 1) % 13;
   Serial.println();
   delay(interPacketDelay);
 }
